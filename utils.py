@@ -2,6 +2,7 @@ import uuid
 import base64
 from Cryptodome.Cipher import AES
 from fastapi import HTTPException
+from schemas import project_source
 
 from config import Config as config
 
@@ -15,10 +16,10 @@ class Utilities:
 
     @staticmethod
     def check_model_source(source):
-        if source not in config.project_source:
+        if source not in project_source:
             # checking if model type is available or not
             raise HTTPException(status_code=400, detail="Unsupported source")
-        return config.project_source.get(source)
+        return project_source.get(source)
 
 
 BS = 16

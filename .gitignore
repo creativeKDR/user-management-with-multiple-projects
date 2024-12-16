@@ -2,3 +2,4 @@ user-managment-system-f4375-firebase-adminsdk-bnrd8-2d0dd56a61.json
 .idea
 .gitignore
 __pycache__
+.dockerignore
