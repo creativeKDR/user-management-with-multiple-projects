@@ -1,3 +1,6 @@
+from fastapi import HTTPException, status
+from google.cloud.firestore_v1 import FieldFilter
+
 from config import Config as config
 from firestoreDb import db
 from schemas import RequestModel
@@ -23,6 +26,9 @@ class UserRepository:
         doc_id = str(Utilities.generateID())
         data = request.dict()
         if model_type == 'p1':
+            doc_ref = self.user_collection.where(filter=FieldFilter('email', '==', request.email)).get()
+            if len(doc_ref) != 0:
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='User with email already existed')
             data['password'] = cipher.encrypt(data['password'])
         self.user_collection.document(doc_id).set(data)
         model = Utilities.check_model_source(model_type)
