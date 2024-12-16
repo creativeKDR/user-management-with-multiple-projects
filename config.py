@@ -8,7 +8,7 @@ class Config:
     aes_iv = bytearray(16)
     aes_key = 'QTdIBCPpxA103nxx'
     project_source = {
-        'project1': ProjectOneUser,
-        'project2': ProjectTwoUser,
-        'project3': ProjectThreeUser
+        'p1': ProjectOneUser,
+        'p2': ProjectTwoUser,
+        'p3': ProjectThreeUser
     }

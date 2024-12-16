@@ -1,8 +1,6 @@
-from typing import Union
-
 from config import Config as config
 from firestoreDb import db
-from schemas import ProjectOneUser, ProjectTwoUser, ProjectThreeUser
+from schemas import RequestModel
 from utils import Utilities, cipher
 
 
@@ -15,20 +13,25 @@ class UserRepository:
         users = []
         for doc in self.user_collection.stream():
             user_data = doc.to_dict()
-            user_data['id'] = doc.id
+            user_data['id'] = doc.id   # attaching a document id with object
             users.append(user_data)
         return users
 
-    async def create(self, source: str, request: Union[ProjectOneUser, ProjectTwoUser, ProjectThreeUser]):
+    async def create(self, request: RequestModel):
+        model_type = request.model_type  # capturing model type to check model
+        del request.model_type
         doc_id = str(Utilities.generateID())
         data = request.dict()
-        data['password'] = cipher.encrypt(data['password'])
+        if model_type == 'p1':
+            data['password'] = cipher.encrypt(data['password'])
         self.user_collection.document(doc_id).set(data)
-        model = Utilities.check_model_source(source)
+        model = Utilities.check_model_source(model_type)
         return model(**self.user_collection.document(doc_id).get().to_dict()), doc_id
 
-    async def update(self, source: str, request: Union[ProjectOneUser, ProjectTwoUser, ProjectThreeUser], user_id: str):
-        model = Utilities.check_model_source(source)
+    async def update(self, request: RequestModel, user_id: str):
+        model_type = request.model_type  # capturing model type to check model
+        del request.model_type
+        model = Utilities.check_model_source(model_type)
         doc_ref = self.user_collection.document(user_id)
         doc = doc_ref.get()
         if doc.exists:

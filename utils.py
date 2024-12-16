@@ -10,11 +10,13 @@ class Utilities:
 
     @staticmethod
     def generateID():
+        # generate unique document IDs
         return uuid.uuid4()
 
     @staticmethod
     def check_model_source(source):
         if source not in config.project_source:
+            # checking if model type is available or not
             raise HTTPException(status_code=400, detail="Unsupported source")
         return config.project_source.get(source)
 
