@@ -39,6 +39,8 @@ class UserRepository:
     async def update(self, request: RequestModel, user_id: str, project_source: str, model):
         if project_source == 'project3':
             request.dob = request.to_firestore()
+        if project_source == 'project1':
+            request.password = cipher.encrypt(request.password)
         doc_ref = self.user_collection.document(user_id)
         doc = doc_ref.get()
         if doc.exists:
