@@ -1,5 +1,5 @@
-from datetime import date
-from typing import Union, Annotated, Literal
+from datetime import date, datetime
+from typing import Union, Annotated
 from uuid import UUID
 
 from fastapi import Body
@@ -18,31 +18,32 @@ class User(BaseModel):
 
 
 class ProjectOneUser(User):
-    model_type: Literal['p1'] = 'p1'
     company_name: str = Field(min_length=3, alias='company_name')
     email: EmailStr
     password: str = Field(min_length=6, alias='password')
 
 
 class ProjectTwoUser(User):
-    model_type: Literal['p2'] = 'p2'
     mobile_no: str = Field(max_length=10, alias='mobile_no')
     hashtag: str = Field(min_length=3, alias='hashtag')
 
 
 class ProjectThreeUser(User):
-    model_type: Literal['p3'] = 'p3'
     mobile_no: str = Field(max_length=10, alias='mobile_no')
     dob: date = Field(alias='dob')
 
+    def to_firestore(self):
+        # Convert the date to datetime before saving to Firestore
+        return datetime.combine(self.dob, datetime.min.time())
+
 
 # Create a new model to represent the discriminated union
-RequestModel = Annotated[Union[ProjectOneUser, ProjectTwoUser, ProjectThreeUser], Body(..., discriminator='model_type')]
+RequestModel = Annotated[Union[ProjectOneUser, ProjectTwoUser, ProjectThreeUser], Body(...)]
 
 project_source = {
-    'p1': ProjectOneUser,
-    'p2': ProjectTwoUser,
-    'p3': ProjectThreeUser
+    'project1': ProjectOneUser,
+    'project2': ProjectTwoUser,
+    'project3': ProjectThreeUser
 }
 
 

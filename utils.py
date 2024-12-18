@@ -18,7 +18,7 @@ class Utilities:
     def check_model_source(source):
         if source not in project_source:
             # checking if model type is available or not
-            raise HTTPException(status_code=400, detail="Unsupported source")
+            raise HTTPException(status_code=400, detail="Unsupported project source")
         return project_source.get(source)
 
 
